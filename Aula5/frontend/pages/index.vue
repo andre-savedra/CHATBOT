@@ -4,7 +4,8 @@
         text: '',
         type: '',
         name: '',
-        image: ''
+        image: '',
+        historyId: null
     });
 
     const includeDialog = ((type)=>{
@@ -20,7 +21,7 @@
         // faz a cópia profunda da estrutura com os valores atuais (deep copy)
         conversationHistory.value.push(
             JSON.parse(JSON.stringify(dialog))
-        );        
+        );                
     });
     
     const sendMessage = async () => {
@@ -31,11 +32,15 @@
         const {data: answer} = await useFetch('http://localhost:8000/chatbot/',{
             method: 'POST',
             body:{
-                question: dialog.text
+                question: dialog.text,
+                userId: 1,
+                conversationId: dialog.historyId
             }   
         })
-        dialog.text = answer.value.content
+        dialog.text = answer.value.message
+        dialog.historyId = answer.value.history.id
         includeDialog('A');
+        dialog.text = ''
     }
 
 //armazena em tela o histórico das mensagens
